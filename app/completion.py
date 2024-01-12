@@ -59,6 +59,16 @@ class OpenAIClient:
             return self.get_completion_chat(prompt)
         else:
             return self.get_completion_text(prompt)
+        
+
+    def wait_on_run(run, thread):
+        while run.status == "queued" or run.status == "in_progress":
+            run = client.beta.threads.runs.retrieve(
+                thread_id=thread.id,
+                run_id=run.id,
+            )
+            time.sleep(0.5)
+        return run
 
     def get_completion_chat(self, prompt) -> str:
         '''Invoke OpenAI API to get chat completion'''
@@ -156,14 +166,7 @@ class OpenAIClient:
                 completion_text += event["choices"][0]["text"]
         return completion_text
     
-    def wait_on_run(run, thread):
-        while run.status == "queued" or run.status == "in_progress":
-            run = client.beta.threads.runs.retrieve(
-                thread_id=thread.id,
-                run_id=run.id,
-            )
-            time.sleep(0.5)
-        return run
+    
 
     def get_pr_prompt(self, title, body, changes) -> str:
         '''Generate a prompt for a PR review'''
