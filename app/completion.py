@@ -63,7 +63,7 @@ class OpenAIClient:
     def get_completion_chat(self, prompt) -> str:
         '''Invoke OpenAI API to get chat completion'''
 
-        println('I"M before my janky code"')
+        print('I"M before my janky code"')
         # my janky code
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
@@ -71,7 +71,7 @@ class OpenAIClient:
             role="user",
             content=prompt
         )
-        println('I"M IN my janky code"')
+        print('I"M IN my janky code"')
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=assistant.id
@@ -84,7 +84,7 @@ class OpenAIClient:
             thread_id=thread.id
         )
 
-        println('I"M after my janky code"')
+        print('I"M after my janky code"')
 
 
 
@@ -114,7 +114,7 @@ class OpenAIClient:
     def get_completion_text(self, prompt) -> str:
         '''Invoke OpenAI API to get text completion'''
 
-        println('I"M before my janky code"')
+        print('I"M before my janky code"')
         # my janky code
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
@@ -122,7 +122,7 @@ class OpenAIClient:
             role="user",
             content=prompt
         )
-        println('I"M IN my janky code"')
+        print('I"M IN my janky code"')
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=assistant.id
@@ -135,7 +135,7 @@ class OpenAIClient:
             thread_id=thread.id
         )
 
-        println('I"M after my janky code"')
+        print('I"M after my janky code"')
 
 
 
