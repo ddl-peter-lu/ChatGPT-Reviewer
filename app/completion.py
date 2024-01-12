@@ -11,7 +11,10 @@ import json
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
+assistant = client.beta.assistants.retrieve(os.getenv("OPENAI_ASSISTANT_ID"))
+#assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
+
+api_key=os.getenv("OPENAI_ASSISTANT_ID"))
 
 #api_version="2023-03-15-preview"
 import tiktoken
@@ -77,7 +80,6 @@ class OpenAIClient:
     def get_completion_chat(self, prompt) -> str:
         '''Invoke OpenAI API to get chat completion'''
 
-        print('I"M before my janky code"')
         # my janky code
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
@@ -85,27 +87,26 @@ class OpenAIClient:
             role="user",
             content=prompt
         )
-        print('I"M IN my janky code"')
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=assistant.id
         )
 
+        print("prompt: " + prompt)
+
         run = wait_on_run(run, thread)
 
         messages = client.beta.threads.messages.list(thread_id=thread.id)
-        show_json(messages)
+        # show_json(messages)
         
         completion_text = ''
 
-
-
-
         for m in messages:
             completion_text +=(f"{m.content[0].text.value}")
+            print('Completion text: ' + completion_text)
             return completion_text
         
-        print(completion_text)
+        
         return completion_text
 
         completion_text = ''
@@ -148,7 +149,6 @@ class OpenAIClient:
     def get_completion_text(self, prompt) -> str:
         '''Invoke OpenAI API to get text completion'''
 
-        print('I"M before my janky code"')
         # my janky code
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
@@ -156,7 +156,7 @@ class OpenAIClient:
             role="user",
             content=prompt
         )
-        print('I"M IN my janky code"')
+
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=assistant.id
@@ -168,11 +168,6 @@ class OpenAIClient:
         messages = client.beta.threads.messages.list(
             thread_id=thread.id
         )
-
-        print('I"M after my janky code"')
-
-
-
 
         prompt_message = f'{system_prompt}\n{prompt}'
         response = client.completions.create(prompt=prompt_message,
