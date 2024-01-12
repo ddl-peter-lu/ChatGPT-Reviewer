@@ -3,10 +3,11 @@
 #
 import os
 import backoff
-import openai
+import openai 
 import time
+from openai import OpenAI
 
-client = openai(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
 
