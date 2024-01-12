@@ -7,6 +7,8 @@ import openai
 import time
 from openai import OpenAI
 
+import json
+
 client = OpenAI(api_key=os.getenv("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"))
 
 assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
@@ -31,6 +33,8 @@ as they may delay the review process. Your feedback should be provided in a time
 manner, using language that is easy to understand and follow.
 '''
 
+def show_json(obj):
+    display(json.loads(obj.model_dump_json()))
 
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
