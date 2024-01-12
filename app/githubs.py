@@ -90,6 +90,7 @@ class GithubClient:
         pr, changes = self.get_pull_request(payload)
         if len(self.openai_client.encoder.encode(changes)) < self.review_tokens and not self.review_per_file:
             # Review the full PR changes together
+            print("going into files all together")
             prompt = self.openai_client.get_pr_prompt(
                 pr.title, pr.body, changes)
             completion = self.get_completion(prompt)
@@ -99,6 +100,7 @@ class GithubClient:
             return
 
         # Review each file changes separately
+        print("going into files separately")
         files_changed = pr.get_files()
         reviews = []
         for file in files_changed:

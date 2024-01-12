@@ -97,6 +97,10 @@ class OpenAIClient:
         show_json(messages)
         
         completion_text = ''
+
+        print(messages[0].content[0].text.value)
+        return messages[0].content[0].text.value
+
         for m in messages:
             completion_text +=(f"{m.content[0].text.value}")
         
@@ -189,7 +193,8 @@ class OpenAIClient:
 
     def get_pr_prompt(self, title, body, changes) -> str:
         '''Generate a prompt for a PR review'''
-        return changes
+        val = 'pr prompts: '
+        return val + changes
         prompt = f'''Here are the title, body and changes for this pull request:
         
 
@@ -206,7 +211,8 @@ Changes:
 
     def get_file_prompt(self, title, body, filename, changes) -> str:
         '''Generate a prompt for a file review'''
-        return changes
+        val = 'file prompts: '
+        return val + changes
         prompt = f'''Here are the title, body and changes for this pull request:
         
 
