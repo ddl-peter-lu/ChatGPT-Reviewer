@@ -190,6 +190,7 @@ class OpenAIClient:
 
     def get_pr_prompt(self, title, body, changes) -> str:
         '''Generate a prompt for a PR review'''
+        return changes
         prompt = f'''Here are the title, body and changes for this pull request:
         
 
