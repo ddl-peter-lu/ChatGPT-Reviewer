@@ -27,6 +27,7 @@ class GithubClient:
         self.blocking = blocking
 
     def get_event_type(self, payload) -> str:
+        print(payload)
         '''Determine the type of event'''
         if payload.get("head_commit") is not None:
             return EVENT_TYPE_PUSH
