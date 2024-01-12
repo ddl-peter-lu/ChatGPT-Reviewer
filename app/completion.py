@@ -3,11 +3,14 @@
 #
 import os
 import backoff
-import openai
-from openai import AzureOpenAI
+import OpenAI
+import time
 
-client = AzureOpenAI(api_key=os.getenv("OPENAI_API_KEY"),
-api_version="2023-03-15-preview")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
+
+#api_version="2023-03-15-preview"
 import tiktoken
 
 #if os.getenv("OPENAI_API_BASE"):
@@ -26,6 +29,7 @@ explanations. Please note that unnecessary explanations or summaries should be a
 as they may delay the review process. Your feedback should be provided in a timely
 manner, using language that is easy to understand and follow.
 '''
+
 
 
 class OpenAIClient:
@@ -81,6 +85,33 @@ class OpenAIClient:
 
     def get_completion_text(self, prompt) -> str:
         '''Invoke OpenAI API to get text completion'''
+
+        println('I"M before my janky code"')
+        # my janky code
+        thread = client.beta.threads.create()
+        message = client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=prompt
+        )
+        println('I"M IN my janky code"')
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=assistant.id
+        )
+
+        run = wait_on_run(run, thread)
+        show_json(run)
+
+        messages = client.beta.threads.messages.list(
+            thread_id=thread.id
+        )
+
+        println('I"M after my janky code"')
+
+
+
+
         prompt_message = f'{system_prompt}\n{prompt}'
         response = client.completions.create(prompt=prompt_message,
         temperature=self.temperature,
@@ -96,10 +127,20 @@ class OpenAIClient:
             if event["choices"] is not None and len(event["choices"]) > 0:
                 completion_text += event["choices"][0]["text"]
         return completion_text
+    
+    def wait_on_run(run, thread):
+        while run.status == "queued" or run.status == "in_progress":
+            run = client.beta.threads.runs.retrieve(
+                thread_id=thread.id,
+                run_id=run.id,
+            )
+            time.sleep(0.5)
+        return run
 
     def get_pr_prompt(self, title, body, changes) -> str:
         '''Generate a prompt for a PR review'''
         prompt = f'''Here are the title, body and changes for this pull request:
+        
 
 Title: {title}
 
