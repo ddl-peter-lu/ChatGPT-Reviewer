@@ -32,6 +32,14 @@ manner, using language that is easy to understand and follow.
 '''
 
 
+def wait_on_run(run, thread):
+    while run.status == "queued" or run.status == "in_progress":
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread.id,
+            run_id=run.id,
+        )
+        time.sleep(0.5)
+    return run
 
 class OpenAIClient:
     '''OpenAI API client'''
@@ -49,14 +57,6 @@ class OpenAIClient:
         if openai.api_type == "azure":
             self.openai_kwargs = {'engine': self.model}
 
-    def wait_on_run(run, thread):
-        while run.status == "queued" or run.status == "in_progress":
-            run = client.beta.threads.runs.retrieve(
-                thread_id=thread.id,
-                run_id=run.id,
-            )
-            time.sleep(0.5)
-        return run
 
     @backoff.on_exception(backoff.expo,
                           (openai.RateLimitError,
