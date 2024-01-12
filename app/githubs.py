@@ -27,7 +27,6 @@ class GithubClient:
         self.blocking = blocking
 
     def get_event_type(self, payload) -> str:
-        print(payload)
         '''Determine the type of event'''
         if payload.get("head_commit") is not None:
             return EVENT_TYPE_PUSH
@@ -104,6 +103,7 @@ class GithubClient:
         files_changed = pr.get_files()
         reviews = []
         for file in files_changed:
+            print("trying this file: " + file.filename)
             file_changes = self.cut_changes(
                 file.previous_filename, file.filename, file.patch)
             prompt = self.openai_client.get_file_prompt(
