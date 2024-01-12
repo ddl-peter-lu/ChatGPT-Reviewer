@@ -14,8 +14,6 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 assistant = client.beta.assistants.retrieve(os.getenv("OPENAI_ASSISTANT_ID"))
 #assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
 
-api_key=os.getenv("OPENAI_ASSISTANT_ID"))
-
 #api_version="2023-03-15-preview"
 import tiktoken
 
