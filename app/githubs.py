@@ -125,7 +125,6 @@ class GithubClient:
                                                 line=1)
                 else:
                     print('in the else')
-                    print('reviews ' + reviews)
                     reviews = reviews + \
                         [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
 
