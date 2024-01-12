@@ -114,7 +114,8 @@ class GithubClient:
                 completion = self.get_completion(prompt)
                 if completion == '':
                     continue
-                if self.comment_per_file:
+
+                if not self.comment_per_file:
                     # Create a review comment on the file
                     reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{completion}'''
                     line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
@@ -123,6 +124,8 @@ class GithubClient:
                                                 path=file.filename,
                                                 line=1)
                 else:
+                    print('in the else')
+                    print('reviews ' + reviews)
                     reviews = reviews + \
                         [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
 
