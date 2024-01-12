@@ -98,11 +98,8 @@ class OpenAIClient:
         
         completion_text = ''
 
-        print(messages[0].content[0].text.value)
-        return messages[0].content[0].text.value
-
         for m in messages:
-            completion_text +=(f"{m.content[0].text.value}")
+            return completion_text +=(f"{m.content[0].text.value}")
         
         print(completion_text)
         return completion_text
