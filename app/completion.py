@@ -92,14 +92,31 @@ class OpenAIClient:
         )
 
         run = wait_on_run(run, thread)
-        show_json(run)
 
         messages = client.beta.threads.messages.list(thread_id=thread.id)
         show_json(messages)
+        print('after show messages')
+        
+        completion_text = ''
+        for m in messages:
+            completion_text +=(f"{m.content[0].text.value}")
+        
+        print(completion_text)
+        return completion_text
 
-        print('I"M after my janky code"')
+        completion_text = ''
+        for event in response:
+            if event["choices"] is not None and len(event["choices"]) > 0:
+                choice = event["choices"][0]
+                if choice.get("delta", None) is not None and choice["delta"].get("content", None) is not None:
+                    completion_text += choice["delta"]["content"]
+                if choice.get("message", None) is not None and choice["message"].get("content", None) is not None:
+                    completion_text += choice["message"]["content"]
+        return completion_text
 
         return show_json(messages)
+    
+
 
 
         messages = [
