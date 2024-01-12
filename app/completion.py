@@ -9,7 +9,8 @@ from openai import OpenAI
 
 import json
 
-client = OpenAI(api_key=os.getenv("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"))
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
 
