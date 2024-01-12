@@ -34,7 +34,7 @@ manner, using language that is easy to understand and follow.
 '''
 
 def show_json(obj):
-    display(json.loads(obj.model_dump_json()))
+    print(json.loads(obj.model_dump_json()))
 
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
