@@ -130,6 +130,6 @@ class GithubClient:
 
         if len(reviews) > 0:
             # Create a review comment on the PR
-            print("Final review on PR: " + reviews)
+            print("Final review on PR: ")
             reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{''.join(reviews)}'''
             pr.create_issue_comment(reviewComments)
