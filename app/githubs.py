@@ -121,12 +121,13 @@ class GithubClient:
                     pr.create_review_comment(body=reviewComments,
                                                 commit=list(pr.get_commits())[-1],
                                                 path=file.filename,
-                                                line=1
+                                                line=1)
                 else:
                     reviews = reviews + \
                         [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
 
         if len(reviews) > 0:
             # Create a review comment on the PR
+            print("Final review on PR: " + reviews)
             reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{''.join(reviews)}'''
             pr.create_issue_comment(reviewComments)
