@@ -9,8 +9,7 @@ from openai import OpenAI
 
 import json
 
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("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"))
 
 assistant = client.beta.assistants.retrieve("asst_0p9BODU7E2a1xd9rdqtwm7c4")
 
@@ -96,7 +95,6 @@ class OpenAIClient:
 
         messages = client.beta.threads.messages.list(thread_id=thread.id)
         show_json(messages)
-        print('after show messages')
         
         completion_text = ''
         for m in messages:
@@ -191,7 +189,6 @@ class OpenAIClient:
 
     def get_pr_prompt(self, title, body, changes) -> str:
         '''Generate a prompt for a PR review'''
-        return
         prompt = f'''Here are the title, body and changes for this pull request:
         
 
