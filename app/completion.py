@@ -62,6 +62,33 @@ class OpenAIClient:
 
     def get_completion_chat(self, prompt) -> str:
         '''Invoke OpenAI API to get chat completion'''
+
+        println('I"M before my janky code"')
+        # my janky code
+        thread = client.beta.threads.create()
+        message = client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=prompt
+        )
+        println('I"M IN my janky code"')
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=assistant.id
+        )
+
+        run = wait_on_run(run, thread)
+        show_json(run)
+
+        messages = client.beta.threads.messages.list(
+            thread_id=thread.id
+        )
+
+        println('I"M after my janky code"')
+
+
+
+
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
