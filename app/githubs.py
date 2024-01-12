@@ -102,26 +102,29 @@ class GithubClient:
         print("going into files separately")
         files_changed = pr.get_files()
         reviews = []
+        print(files_changed)
         for file in files_changed:
-            print("trying this file: " + file.filename)
-            file_changes = self.cut_changes(
-                file.previous_filename, file.filename, file.patch)
-            prompt = self.openai_client.get_file_prompt(
-                pr.title, pr.body, file.filename, file_changes)
-            completion = self.get_completion(prompt)
-            if completion == '':
-                continue
-            if self.comment_per_file:
-                # Create a review comment on the file
-                reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{completion}'''
-                line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
-                pr.create_review_comment(body=reviewComments,
-                                         commit=list(pr.get_commits())[-1],
-                                         path=file.filename,
-                                         line=int(line_no))
-            else:
-                reviews = reviews + \
-                    [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
+            if file.filename.endswith('.adoc'):
+                print("trying this file: " + file.filename)
+                file_changes = self.cut_changes(
+                    file.previous_filename, file.filename, file.patch)
+                prompt = self.openai_client.get_file_prompt(
+                    pr.title, pr.body, file.filename, file_changes)
+                print("Trying this prompt: " + prompt)
+                completion = self.get_completion(prompt)
+                if completion == '':
+                    continue
+                if self.comment_per_file:
+                    # Create a review comment on the file
+                    reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{completion}'''
+                    line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
+                    pr.create_review_comment(body=reviewComments,
+                                                commit=list(pr.get_commits())[-1],
+                                                path=file.filename,
+                                                line=1
+                else:
+                    reviews = reviews + \
+                        [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
 
         if len(reviews) > 0:
             # Create a review comment on the PR
