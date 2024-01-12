@@ -94,13 +94,12 @@ class OpenAIClient:
         run = wait_on_run(run, thread)
         show_json(run)
 
-        messages = client.beta.threads.messages.list(
-            thread_id=thread.id
-        )
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        show_json(messages)
 
         print('I"M after my janky code"')
 
-
+        return show_json(messages)
 
 
         messages = [
