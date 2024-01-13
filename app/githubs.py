@@ -117,7 +117,7 @@ class GithubClient:
 
                 if self.comment_per_file:
                     # Create a review comment on the file
-                    reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{completion}'''
+                    reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{completion}'''
                     # line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
                     pr.create_review_comment(body=reviewComments,
                                                 commit=list(pr.get_commits())[-1],
@@ -131,5 +131,5 @@ class GithubClient:
         if len(reviews) > 0:
             # Create a review comment on the PR
             print("Final review on PR: ")
-            reviewComments = f'''@{pr.user.login} Thanks for your contributions!\n\n{''.join(reviews)}'''
+            reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{''.join(reviews)}'''
             pr.create_issue_comment(reviewComments)
