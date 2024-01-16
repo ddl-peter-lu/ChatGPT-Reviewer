@@ -88,8 +88,6 @@ class GithubClient:
         '''Review a PR'''
         pr, changes = self.get_pull_request(payload)
         if len(self.openai_client.encoder.encode(changes)) < self.review_tokens and not self.review_per_file:
-            # Review the full PR changes together
-            print("going into files all together")
             prompt = self.openai_client.get_pr_prompt(
                 pr.title, pr.body, changes)
             completion = self.get_completion(prompt)
@@ -99,37 +97,40 @@ class GithubClient:
             return
 
         # Review each file changes separately
-        print("going into files separately")
         files_changed = pr.get_files()
         reviews = []
-        print(files_changed)
+
+        adoc_count = 0
         for file in files_changed:
             if file.filename.endswith('.adoc'):
-                print("trying this file: " + file.filename)
-                file_changes = self.cut_changes(
-                    file.previous_filename, file.filename, file.patch)
-                prompt = self.openai_client.get_file_prompt(
-                    pr.title, pr.body, file.filename, file_changes)
-                print("Trying this prompt: " + prompt)
-                completion = self.get_completion(prompt)
-                if completion == '':
-                    continue
+                adoc_count += 1
 
-                if self.comment_per_file:
-                    # Create a review comment on the file
-                    reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{completion}'''
-                    # line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
-                    pr.create_review_comment(body=reviewComments,
-                                                commit=list(pr.get_commits())[-1],
-                                                path=file.filename,
-                                                subject_type="file")
-                else:
-                    print('in the else')
-                    reviews = reviews + \
-                        [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
 
-        if len(reviews) > 0:
-            # Create a review comment on the PR
-            print("Final review on PR: ")
-            reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{''.join(reviews)}'''
-            pr.create_issue_comment(reviewComments)
+        if adoc_count < 15:
+            for file in files_changed:
+                if file.filename.endswith('.adoc'):
+                    file_changes = self.cut_changes(
+                        file.previous_filename, file.filename, file.patch)
+                    prompt = self.openai_client.get_file_prompt(
+                        pr.title, pr.body, file.filename, file_changes)
+                    completion = self.get_completion(prompt)
+                    if completion == '':
+                        continue
+
+                    if self.comment_per_file:
+                        # Create a review comment on the file
+                        reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{completion}'''
+                        # line_no = re.search('\@\@ \-(\d+),', file.patch).group(1)
+                        pr.create_review_comment(body=reviewComments,
+                                                    commit=list(pr.get_commits())[-1],
+                                                    path=file.filename,
+                                                    subject_type="file")
+                    else:
+                        reviews = reviews + \
+                            [f"**Here are review comments for file {file.filename}:**\n{completion}\n\n"]
+
+            if len(reviews) > 0:
+                # Create a review comment on the PR
+                print("Final review on PR: ")
+                reviewComments = f'''@{pr.user.login} Thanks for your contributions! The following is feedback provided by ChatGPT, take any feedback with a grain of salt and report any unexpected behavior to the #documentation channel.\n\n{''.join(reviews)}'''
+                pr.create_issue_comment(reviewComments)

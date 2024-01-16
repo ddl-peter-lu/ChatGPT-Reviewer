@@ -78,7 +78,6 @@ class OpenAIClient:
     def get_completion_chat(self, prompt) -> str:
         '''Invoke OpenAI API to get chat completion'''
 
-        # my janky code
         thread = client.beta.threads.create()
         message = client.beta.threads.messages.create(
             thread_id=thread.id,
@@ -90,23 +89,21 @@ class OpenAIClient:
             assistant_id=assistant.id
         )
 
-        print("prompt: " + prompt)
-
         run = wait_on_run(run, thread)
 
         messages = client.beta.threads.messages.list(thread_id=thread.id)
-        # show_json(messages)
-        
+    
         completion_text = ''
 
         for m in messages:
             completion_text +=(f"{m.content[0].text.value}")
-            print('Completion text: ' + completion_text)
+            # Just return the first completion text value
             return completion_text
         
         
         return completion_text
 
+        # Default code using completion rather than assistant below
         completion_text = ''
         for event in response:
             if event["choices"] is not None and len(event["choices"]) > 0:
@@ -161,7 +158,7 @@ class OpenAIClient:
         )
 
         run = wait_on_run(run, thread)
-        show_json(run)
+        # show_json(run)
 
         messages = client.beta.threads.messages.list(
             thread_id=thread.id
